@@ -11,10 +11,9 @@ namespace StepDX
         private Vector2 aSave; // Acceleration
         private Vector2 pSave; // Position
         private Vector2 vSave; // Velocity
-
-        private float spriteTime = 0;
-        private float spriteRate = 6;   // 6 per second
-
+        private bool _jumping;
+        private float spriteTime;
+        private readonly float spriteRate = 6; // 6 per second
         protected List<Vector2> verticesM = new List<Vector2>(); // The vertices
 
         public Vector2 Pos
@@ -40,20 +39,6 @@ namespace StepDX
             get { return verticesM; }
         }
 
-        public void SaveState()
-        {
-            pSave = _pos;
-            vSave = _vel;
-            aSave = _acc;
-        }
-
-        public void RestoreState()
-        {
-            _pos = pSave;
-            _vel = vSave;
-            _acc = aSave;
-        }
-
         public override void Advance(float dt)
         {
             // Euler steps
@@ -62,23 +47,24 @@ namespace StepDX
             _pos.X += _vel.X * dt;
             _pos.Y += _vel.Y * dt;
 
+            if (_vel.Y == 0) // reset jumping if standing
+                _jumping = false;
+
             int spriteNum;
 
-            if (_vel.X == 0)
+            if (_vel.X == 0) // sprite not moving
             {
                 spriteNum = 5;
                 spriteTime = 0;
             }
-            else
+            else // sprite walking
             {
                 spriteTime += dt;
-                spriteNum = (int)(spriteTime * spriteRate) % 4;     // 4 images
+                spriteNum = (int) (spriteTime * spriteRate) % 4; // 4 images
             }
 
-            if (_vel.Y != 0)
-            {
+            if (_jumping) // sprite jumping/falling
                 spriteNum = 7;
-            }
 
             // Create the texture vertices
             textureC.Clear();
@@ -105,6 +91,30 @@ namespace StepDX
             {
                 verticesM.Add(new Vector2(x.X + _pos.X, x.Y + _pos.Y));
             }
+        }
+
+        public void Jump()
+        {
+            if (!_jumping)
+            {
+                _vel.Y = 7;
+                _acc.Y = -9.8f;
+                _jumping = true;
+            }
+        }
+
+        public void SaveState()
+        {
+            pSave = _pos;
+            vSave = _vel;
+            aSave = _acc;
+        }
+
+        public void RestoreState()
+        {
+            _pos = pSave;
+            _vel = vSave;
+            _acc = aSave;
         }
     }
 }

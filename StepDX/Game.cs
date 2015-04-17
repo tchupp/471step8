@@ -218,9 +218,7 @@ namespace StepDX
                     break;
 
                 case Keys.Space:
-                    v.Y = 7;
-                    player.Vel = v;
-                    player.Acc = new Vector2(0, -9.8f);
+                    player.Jump();
                     break;
 
                 default:
