@@ -8,46 +8,49 @@ namespace StepDX
     public class PolygonTextured : Polygon
     {
         /// <summary>
-        /// The texture map we use for this polygon
+        ///     List of texture coordinates
         /// </summary>
-        private Texture texture;
+        protected List<Vector2> TextureC = new List<Vector2>();
 
         /// <summary>
-        /// List of texture coordinates
+        ///     The texture map we use for this polygon
         /// </summary>
-        protected List<Vector2> textureC = new List<Vector2>();
+        private Texture _texture;
 
         /// <summary>
-        /// Indicates if the texture is transparent
+        ///     Indicates if the texture is transparent
         /// </summary>
-        private bool transparent;
+        private bool _transparent;
 
         /// <summary>
-        /// Indicates if the texture is transparent
+        ///     Indicates if the texture is transparent
         /// </summary>
         public bool Transparent
         {
-            set { transparent = value; }
-            get { return transparent; }
+            set { _transparent = value; }
+            get { return _transparent; }
         }
 
         /// <summary>
-        /// The texture map we use for this polygon
+        ///     The texture map we use for this polygon
         /// </summary>
         public Texture Tex
         {
-            get { return texture; }
-            set { texture = value; }
+            get { return _texture; }
+            set { _texture = value; }
         }
 
         /// <summary>
-        /// Add a texture coordinate
+        ///     Add a texture coordinate
         /// </summary>
         /// <param name="v">Texture coordinate</param>
-        public void AddTex(Vector2 v) { textureC.Add(v); }
+        public void AddTex(Vector2 v)
+        {
+            TextureC.Add(v);
+        }
 
         /// <summary>
-        /// Render the textured polygon
+        ///     Render the textured polygon
         /// </summary>
         /// <param name="device">Device to render onto</param>
         public override void Render(Device device)
@@ -59,11 +62,11 @@ namespace StepDX
             if (vertices.Count < 3) return;
 
             // Ensure the number of vertices and textures are the same
-            Debug.Assert(textureC.Count == vertices.Count);
+            Debug.Assert(TextureC.Count == vertices.Count);
 
-            if (verticesV == null)
+            if (VerticesV == null)
             {
-                verticesV = new VertexBuffer(typeof (CustomVertex.PositionColoredTextured), // Type
+                VerticesV = new VertexBuffer(typeof (CustomVertex.PositionColoredTextured), // Type
                     vertices.Count, // How many
                     device, // What device
                     0, // No special usage
@@ -71,32 +74,32 @@ namespace StepDX
                     Pool.Managed);
             }
 
-            var gs = verticesV.Lock(0, 0, 0); // Lock the background vertex list
-            var clr = color.ToArgb();
+            var gs = VerticesV.Lock(0, 0, 0); // Lock the background vertex list
+            var clr = PolyColor.ToArgb();
 
             for (var i = 0; i < vertices.Count; i++)
             {
                 var v = vertices[i];
-                var t = textureC[i];
+                var t = TextureC[i];
                 gs.Write(new CustomVertex.PositionColoredTextured(v.X, v.Y, 0, clr, t.X, t.Y));
             }
 
-            verticesV.Unlock();
+            VerticesV.Unlock();
 
-            if (transparent)
+            if (_transparent)
             {
                 device.RenderState.AlphaBlendEnable = true;
                 device.RenderState.SourceBlend = Blend.SourceAlpha;
                 device.RenderState.DestinationBlend = Blend.InvSourceAlpha;
             }
 
-            device.SetTexture(0, texture);
-            device.SetStreamSource(0, verticesV, 0);
+            device.SetTexture(0, _texture);
+            device.SetStreamSource(0, VerticesV, 0);
             device.VertexFormat = CustomVertex.PositionColoredTextured.Format;
             device.DrawPrimitives(PrimitiveType.TriangleFan, 0, vertices.Count - 2);
             device.SetTexture(0, null);
 
-            if (transparent) device.RenderState.AlphaBlendEnable = false;
+            if (_transparent) device.RenderState.AlphaBlendEnable = false;
         }
     }
 }

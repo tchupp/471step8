@@ -5,16 +5,16 @@ namespace StepDX
 {
     public class GameSprite : PolygonTextured
     {
+        private const float SpriteRate = 6; // 6 per second
+        protected List<Vector2> VerticesM = new List<Vector2>(); // The vertices
         private Vector2 _acc = new Vector2(0, 0); // Acceleration
         private Vector2 _pos = new Vector2(0, 0); // Position
         private Vector2 _vel = new Vector2(0, 0); // Velocity
-        private Vector2 aSave; // Acceleration
-        private Vector2 pSave; // Position
-        private Vector2 vSave; // Velocity
+        private Vector2 _aSave; // Acceleration
+        private Vector2 _pSave; // Position
+        private Vector2 _vSave; // Velocity
         private bool _jumping;
-        private float spriteTime;
-        private readonly float spriteRate = 6; // 6 per second
-        protected List<Vector2> verticesM = new List<Vector2>(); // The vertices
+        private float _spriteTime;
 
         public Vector2 Pos
         {
@@ -36,7 +36,7 @@ namespace StepDX
 
         public override List<Vector2> Vertices
         {
-            get { return verticesM; }
+            get { return VerticesM; }
         }
 
         public override void Advance(float dt)
@@ -55,41 +55,41 @@ namespace StepDX
             if (_vel.X == 0) // sprite not moving
             {
                 spriteNum = 5;
-                spriteTime = 0;
+                _spriteTime = 0;
             }
             else // sprite walking
             {
-                spriteTime += dt;
-                spriteNum = (int) (spriteTime * spriteRate) % 4; // 4 images
+                _spriteTime += dt;
+                spriteNum = (int) (_spriteTime * SpriteRate) % 4; // 4 images
             }
 
             if (_jumping) // sprite jumping/falling
                 spriteNum = 7;
 
             // Create the texture vertices
-            textureC.Clear();
+            TextureC.Clear();
             if (_vel.X >= 0)
             {
-                textureC.Add(new Vector2(spriteNum * 0.125f, 1));
-                textureC.Add(new Vector2(spriteNum * 0.125f, 0));
-                textureC.Add(new Vector2((spriteNum + 1) * 0.125f, 0));
-                textureC.Add(new Vector2((spriteNum + 1) * 0.125f, 1));
+                TextureC.Add(new Vector2(spriteNum * 0.125f, 1));
+                TextureC.Add(new Vector2(spriteNum * 0.125f, 0));
+                TextureC.Add(new Vector2((spriteNum + 1) * 0.125f, 0));
+                TextureC.Add(new Vector2((spriteNum + 1) * 0.125f, 1));
             }
             else
             {
                 // If moving in the negative direction, we draw our sprite 
                 // as a mirror image.
-                textureC.Add(new Vector2((spriteNum + 1) * 0.125f, 1));
-                textureC.Add(new Vector2((spriteNum + 1) * 0.125f, 0));
-                textureC.Add(new Vector2(spriteNum * 0.125f, 0));
-                textureC.Add(new Vector2(spriteNum * 0.125f, 1));
+                TextureC.Add(new Vector2((spriteNum + 1) * 0.125f, 1));
+                TextureC.Add(new Vector2((spriteNum + 1) * 0.125f, 0));
+                TextureC.Add(new Vector2(spriteNum * 0.125f, 0));
+                TextureC.Add(new Vector2(spriteNum * 0.125f, 1));
             }
 
             // Move the vertices
-            verticesM.Clear();
-            foreach (var x in verticesB)
+            VerticesM.Clear();
+            foreach (var x in VerticesB)
             {
-                verticesM.Add(new Vector2(x.X + _pos.X, x.Y + _pos.Y));
+                VerticesM.Add(new Vector2(x.X + _pos.X, x.Y + _pos.Y));
             }
         }
 
@@ -103,18 +103,18 @@ namespace StepDX
             }
         }
 
-        public void SaveState()
-        {
-            pSave = _pos;
-            vSave = _vel;
-            aSave = _acc;
-        }
-
         public void RestoreState()
         {
-            _pos = pSave;
-            _vel = vSave;
-            _acc = aSave;
+            _pos = _pSave;
+            _vel = _vSave;
+            _acc = _aSave;
+        }
+
+        public void SaveState()
+        {
+            _pSave = _pos;
+            _vSave = _vel;
+            _aSave = _acc;
         }
     }
 }
