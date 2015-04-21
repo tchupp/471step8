@@ -10,6 +10,8 @@ namespace StepDX
 {
     public partial class Game : Form
     {
+        private const float PlayerMinX = 0.4f; // Minimum x allowed
+        private const float PlayerMaxX = 31.6f; // Maximum x allowed
         /// <summary>
         ///     Height of our playing area (meters)
         /// </summary>
@@ -21,19 +23,19 @@ namespace StepDX
         private const float PlayingW = 32;
 
         /// <summary>
-        ///     The DirectX device we will draw on
-        /// </summary>
-        private Device _device;
-
-        /// <summary>
         ///     The background image class
         /// </summary>
         private readonly Background _background;
 
         /// <summary>
-        ///     All of the polygons that make up our world
+        ///     The collision testing subsystem
         /// </summary>
-        private readonly List<Polygon> _world = new List<Polygon>();
+        private readonly Collision _collision = new Collision();
+
+        /// <summary>
+        ///     The DirectX device we will draw on
+        /// </summary>
+        private Device _device;
 
         /// <summary>
         ///     What the last time reading was
@@ -41,19 +43,19 @@ namespace StepDX
         private long _lastTime;
 
         /// <summary>
-        ///     A stopwatch to use to keep track of time
-        /// </summary>
-        private readonly Stopwatch _stopwatch = new Stopwatch();
-
-        /// <summary>
         ///     Our player sprite
         /// </summary>
         private readonly GameSprite _player = new GameSprite();
 
         /// <summary>
-        ///     The collision testing subsystem
+        ///     A stopwatch to use to keep track of time
         /// </summary>
-        private readonly Collision _collision = new Collision();
+        private readonly Stopwatch _stopwatch = new Stopwatch();
+
+        /// <summary>
+        ///     All of the polygons that make up our world
+        /// </summary>
+        private readonly List<Polygon> _world = new List<Polygon>();
 
         public Game()
         {
@@ -137,14 +139,19 @@ namespace StepDX
 
                 _player.Advance(step);
 
+                var pos = _player.Pos;
+                if (_player.Pos.X < PlayerMinX) pos.X = PlayerMinX;
+                else if (_player.Pos.X > PlayerMaxX) pos.X = PlayerMinX;
+                _player.Pos = pos;
+
                 foreach (var p in _world)
                 {
                     p.Advance(step);
                 }
 
-                foreach (var p in _world)
+                foreach (var poly in _world)
                 {
-                    if (_collision.Test(_player, p))
+                    if (_collision.Test(_player, poly))
                     {
                         var depth = _collision.P1InP2 ? _collision.Depth : -_collision.Depth;
                         _player.Pos = _player.Pos + _collision.Norm * depth;
@@ -243,7 +250,7 @@ namespace StepDX
             }
         }
 
-        private void AddObstacle(float left, float right, float top, float bot, Color color)
+        private void AddObstacle(float left, float right, float bot, float top, Color color)
         {
             var obj = new Polygon();
             obj.AddVertex(new Vector2(left, top));

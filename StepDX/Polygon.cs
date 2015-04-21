@@ -8,7 +8,7 @@ namespace StepDX
     public class Polygon
     {
         /// <summary>
-        ///     The PolyColor we will draw this polygon
+        ///     The color we will draw this polygon
         /// </summary>
         protected Color PolyColor = Color.AntiqueWhite;
 
@@ -27,7 +27,7 @@ namespace StepDX
         protected VertexBuffer VerticesV;
 
         /// <summary>
-        ///     A property: The PolyColor we will draw the polygon
+        ///     A property: The color we will draw the polygon
         /// </summary>
         public Color Color
         {

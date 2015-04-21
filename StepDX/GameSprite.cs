@@ -13,7 +13,7 @@ namespace StepDX
         private Vector2 _aSave; // Acceleration
         private Vector2 _pSave; // Position
         private Vector2 _vSave; // Velocity
-        private bool _jumping;
+        private bool _idle;
         private float _spriteTime;
 
         public Vector2 Pos
@@ -48,7 +48,7 @@ namespace StepDX
             _pos.Y += _vel.Y * dt;
 
             if (_vel.Y == 0) // reset jumping if standing
-                _jumping = false;
+                _idle = true;
 
             int spriteNum;
 
@@ -63,7 +63,7 @@ namespace StepDX
                 spriteNum = (int) (_spriteTime * SpriteRate) % 4; // 4 images
             }
 
-            if (_jumping) // sprite jumping/falling
+            if (!_idle) // sprite jumping/falling
                 spriteNum = 7;
 
             // Create the texture vertices
@@ -95,11 +95,11 @@ namespace StepDX
 
         public void Jump()
         {
-            if (!_jumping)
+            if (_idle)
             {
                 _vel.Y = 7;
                 _acc.Y = -9.8f;
-                _jumping = true;
+                _idle = false;
             }
         }
 

@@ -23,21 +23,21 @@ namespace StepDX
         private bool _transparent;
 
         /// <summary>
-        ///     Indicates if the texture is transparent
-        /// </summary>
-        public bool Transparent
-        {
-            set { _transparent = value; }
-            get { return _transparent; }
-        }
-
-        /// <summary>
         ///     The texture map we use for this polygon
         /// </summary>
         public Texture Tex
         {
             get { return _texture; }
             set { _texture = value; }
+        }
+
+        /// <summary>
+        ///     Indicates if the texture is transparent
+        /// </summary>
+        public bool Transparent
+        {
+            set { _transparent = value; }
+            get { return _transparent; }
         }
 
         /// <summary>

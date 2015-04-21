@@ -57,7 +57,10 @@ namespace StepDX
                 // Even, rising
                 h = MaxHeight * (_time - step * Speed) / Speed;
             }
-            else h = 1 - MaxHeight * (_time - step * Speed) / Speed;
+            else
+            {
+                h = 1 - MaxHeight * (_time - step * Speed) / Speed;
+            }
 
             // Move it
             VerticesM.Clear();

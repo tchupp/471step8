@@ -17,6 +17,21 @@ namespace StepDX
     internal class Collision
     {
         /// <summary>
+        ///     Intersection depth
+        /// </summary>
+        private float _depth;
+
+        /// <summary>
+        ///     The normal at the intersection
+        /// </summary>
+        private Vector2 _norm = new Vector2();
+
+        /// <summary>
+        ///     True if polygon 1 has the vertex inside polygon 2 edge
+        /// </summary>
+        private bool _p1Inp2;
+
+        /// <summary>
         ///     First polygon collision test result (one with the vertex)
         /// </summary>
         private Polygon _poly1;
@@ -25,21 +40,6 @@ namespace StepDX
         ///     Second polygon collision test result (one with the edge)
         /// </summary>
         private Polygon _poly2;
-
-        /// <summary>
-        ///     The normal at the intersection
-        /// </summary>
-        private Vector2 _norm = new Vector2();
-
-        /// <summary>
-        ///     Intersection depth
-        /// </summary>
-        private float _depth;
-
-        /// <summary>
-        ///     True if polygon 1 has the vertex inside polygon 2 edge
-        /// </summary>
-        private bool _p1Inp2;
 
         /// <summary>
         ///     Intersection depth
